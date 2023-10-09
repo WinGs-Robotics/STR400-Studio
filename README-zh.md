@@ -43,7 +43,8 @@
 
 根据您的操作系统（Windows、Mac（Intel）或 Linux），找到对应的可执行文件并启动。成功启动后，您将看到如下窗口：
 
-<div align="center" style="margin: 20px 20px;">    <img src="https://github.com/WinGs-Robotics/STR400-Studio/raw/main/references/terminal.png" width="500">
+<div align="center" style="margin: 20px 20px;">    
+<img src="https://github.com/WinGs-Robotics/STR400-Studio/raw/main/references/terminal.png" width="500">
 </div>
 随后，使用浏览器打开 [http://localhost:8080] 以进入 APP 界面。
 
@@ -59,7 +60,7 @@
 
 成功启动程序后，使用浏览器访问程序的前端界面，您会看到如下的界面：
 
-<div align="center" style="margin: 20px 20px;">
+<div align="center" style="padding: 20px 20px;">
     <img src="https://github.com/WinGs-Robotics/STR400-Studio/raw/main/references/connectionPage.png">
 </div>
 
