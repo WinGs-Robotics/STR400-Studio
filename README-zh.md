@@ -52,7 +52,7 @@
 <p>&nbsp;</p>
 随后，使用浏览器打开 [http://localhost:8080] 以进入 APP 界面。
 
-> **注意**: 若您想在同一局域网的其他设备上访问此服务，确保 STR400 Studio 后台服务在 PC 上运行。同时，您需要知道运行`str-studio.exe`的电脑的 IP 地址，并确保 8080 端口的防火墙保护已关闭。
+> **注意**: 若您想在同一局域网的其他设备上访问此服务，确保 STR400 Studio 后台服务在 PC 上运行。同时，您需要知道运行`str-studio`可执行文件的电脑的 IP 地址，并确保 8080 端口的防火墙保护已关闭。
 
 ---
 
@@ -300,7 +300,7 @@ Websocket URI 为 `/api/ws` , 本机访问地址：`ws://localhost:{port}/api/ws
 
 ##### 1.3 更新频率
 
-上位机的获取机械臂信息频率约为 80HZ，发送命令至机械臂频率也为 80HZ
+上位机的获取机械臂信息频率约为 50HZ，发送命令至机械臂频率也为 50HZ
 
 过快发送的命令会被丢弃，上位机同步以最后收到的前端指令为准
 
@@ -392,6 +392,8 @@ interface Position = {x:number, y:number, z:number, roll:number, pitch:number, y
 }
 ```
 
+> **注意**: 调用"Disable"之前通常需要先"Stop"，等待 500ms，再 Disable，否则在此 enable 可能会导致问题。
+
 - 制动 (同时停止正在运行的任务)
 
 ```json
@@ -412,32 +414,6 @@ interface Position = {x:number, y:number, z:number, roll:number, pitch:number, y
 }
 ```
 
-- 外部位置追踪（PID 控制）
-
-```json
-
-// 首先发送SetTask激活外部位置追踪任务
-{
-  "action":"SetTask",
-  "payload": {
-    "type":"ExternalPositionControlTask",
-    "args": null
-  }
-}
-
-// 之后可以发送命令来追踪位置
-{
-  "action":"ExternalPositionControl",
-  "payload": [0,0,0,0,0,0] // 追踪角度
-}
-
-{
-  "action":"ExternalPositionControl",
-  "payload": {"x":0, "y":0, "z": 0, "roll":0, "pitch": 0, "yaw": 0} // 追踪位置
-}
-
-```
-
 - 实时控制
 
 ```json
@@ -447,7 +423,7 @@ interface Position = {x:number, y:number, z:number, roll:number, pitch:number, y
   "action":"SetTask",
   "payload": {
     "type":"RealTimePositionControlTask",
-    "args": null
+    "args": {"x":null, "y":null, "z": null, "roll":null, "pitch": null, "yaw": null}
   }
 }
 
@@ -515,11 +491,18 @@ interface Position = {x:number, y:number, z:number, roll:number, pitch:number, y
 }
 ```
 
-#### 2. Python SDK
+#### 2. Python SDK (实验中，谨慎使用)
 
 ##### 2.1 下载并使用
 
 打开[link](https://github.com/WinGs-Robotics/STR400-Studio/tree/main/PythonSDK),下载这个文件夹，在这个文件夹里 import STR400，可以得到 Python 的 SDK，需要 STR400 的 APP 运行着，并且和机械臂已经完成串口连接。
+
+该 SDK 在 Python 3.9.13 完成测试。
+在运行之前，需要安装必要的 python 包
+
+```bash
+pip install websocket-client
+```
 
 以下是一个简单的示例：
 
@@ -527,21 +510,84 @@ interface Position = {x:number, y:number, z:number, roll:number, pitch:number, y
 from STR400_SDK.str400 import STR400
 import time
 
+# Initialize the robot with the given host and port
 robot = STR400(host='localhost', port=8080)
 
-# Example usage
-response = robot.enable()
-print(response)
+# Activate the robot
+robot.enable()
+print("Robot has been successfully enabled.")
 
-time.sleep(1)
+# Command the robot to move its joints to the specified angles using MoveJ
+print(
+    "Initiating MoveJ to target angles [0, 0, 0, 0, 0, 0] over a duration of 6 seconds...")
+angles = [0, 0, 0, 0, 0, 0, 6]
+robot.movej(angles)
 
-# MoveJ command
-angles = [0, 0, 90, 0, 90, 0, 6]
-response = robot.movej(angles)
-print(response)
+# Brief pause to allow the MoveJ command to be processed
+time.sleep(0.5)
+
+# Monitor the task status and wait until the MoveJ operation is completed
+print("Monitoring task status until the MoveJ operation is completed...")
+while True:
+    task_status = robot.get_task_status()
+    if task_status.get('type') is None:  # Check if task has concluded
+        print("MoveJ operation completed.")
+        break
+    time.sleep(0.2)
+
+# Deactivate the robot after operations are done
+robot.disable()
+print("Robot is now disabled.")
 ```
 
 ##### 2.2 可用命令
+
+目前支持的命令如下，参照 SDK 文件夹里的 Example 了解更多
+
+##### 读取命令
+
+-**_任务状态_**: 返回正在运行的实时任务状态，task_status.name == null 的时候是闲置状态，可以接受命令
+
+```python
+task_status = robot.get_task_status()
+print("Task Status:", task_status)
+```
+
+示例输出:
+
+```python
+Task Status: {'type': 'MoveJTask', 'progress': 0.9867109634551495}
+```
+
+-**_机器人状态_**: 返回实时机器人状态
+
+```python
+robot_status = robot.get_robot_status()
+print("Robot Status:", robot_status)
+```
+
+示例输出:
+
+```python
+Robot Status: {
+'jointEnabled': [1, 1, 1, 1, 1, 1],
+'jointAngle': [0, 0, 89.99176000244148, 0, 89.99176000244148, 0],
+'cartesianPosition': {'x': 2.653931355114116e-17,
+                      'y': 0.1577425676345506,
+                      'z': 0.20302268576136304,
+                      'roll': -179.983520004883,
+                      'pitch': 7.017718262059415e-15,
+                      'yaw': -90},
+'encoderAbsolutePositions': [0, 0, 0, 0, 0, 0],
+'jointTemperature': [0, 0, 0, 0, 0, 0],
+'jointSpeed': [0, 0, 0, 0, 0, 0],
+'jointErrorCode': [0, 0, 0, 0, 0, 0],
+'jointRunning': [0, 0, 0, 0, 0, 0],
+'jointCurrent': [0, 0, 0, 0, 0, 0]
+}
+```
+
+##### 写入命令
 
 -**_初始化_**: 与机械臂建立连接。
 
@@ -573,12 +619,10 @@ robot.stop()
 robot.back_to_zero()
 ```
 
--**_外部位置控制_**: 激活外部位置控制任务并允许跟踪位置。
+-**_激活实时位置控制_**: 向机器人发送实时位置控制命令, null 为停止，true 为正方向，false 为反方向
 
 ```python
-task_type = "ExternalPositionControlTask"
-args = None
-robot.external_position_control(task_type, args)
+robot.start_real_time_position_control()
 ```
 
 -**_实时位置控制_**: 向机器人发送实时位置控制命令, null 为停止，true 为正方向，false 为反方向
@@ -600,22 +644,4 @@ robot.wscript(script_content, repeatCount=1)
 ```python
 angles = [0, 0, 0, 0, 0, 0，0]
 robot.movej(angles)
-```
-
--**_MoveL_**: 将机器人移动到指定的笛卡尔位置。前六个数是 x, y, z, roll, pitch, yaw 单位分别是 mm 和 °，最后一个数是时间，单位是秒
-
-```python
-positions = [0, 0, 0, 0, 0, 0, 0]
-robot.movel(positions)
-```
-
--**_MoveS_**: 使机器人经过一系列笛卡尔位置。数据格式和 MoveL 一致
-
-```python
-positions_series = [
-    [0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0]
-]
-robot.moves(positions_series)
 ```

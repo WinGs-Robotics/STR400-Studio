@@ -11,7 +11,7 @@
 2. [Download & Installation](#download--installation)
 3. [UI Feature Overview](#ui-feature-overview)
 4. [STR400 Robotic Arm Kinematics Model & Motion Planning Methods](#str400-robotic-arm-kinematics-model--motion-planning-methods)
-5. [websocket APIs and Python SDK](#python-api-example)
+5. [websocket APIs and Python SDK](#python-api-examples)
 
 ---
 
@@ -60,7 +60,7 @@ Based on your OS (Windows, Mac (Intel), or Linux), locate the respective executa
 
 Next, open a browser and visit [http://localhost:8080] to enter the APP interface.
 
-> **Note**: If you wish to access the service from another device within the same LAN, ensure the STR400 Studio backend service runs on the PC. Additionally, you'll need to know the IP address of the PC running `str-studio.exe`, and make sure the 8080 port is not firewalled.
+> **Note**: If you wish to access the service from another device within the same LAN, ensure the STR400 Studio backend service runs on the PC. Additionally, you'll need to know the IP address of the PC running `str-studio` executable, and make sure the 8080 port is not firewalled.
 
 ---
 
@@ -277,7 +277,7 @@ The three main considerations for trajectory planning:
 
 ### WebSocket APIs and Python SDK
 
-<a name="python-api-example"></a>
+<a name="python-api-examples"></a>
 
 #### 1. WebSocket APIs
 
@@ -292,7 +292,7 @@ The data format is a json string.
 
 ##### 1.3 Update Frequency
 
-The frequency at which the host computer retrieves robotic arm information is approximately 80HZ, and the frequency to send commands to the robotic arm is also 80HZ.
+The frequency at which the host computer retrieves robotic arm information is approximately 50HZ, and the frequency to send commands to the robotic arm is also 50HZ.
 
 Commands sent too quickly will be discarded, and the host computer synchronizes according to the last received frontend instruction.
 
@@ -382,6 +382,8 @@ interface Position = {x:number, y:number, z:number, roll:number, pitch:number, y
 }
 ```
 
+> **Note**: Before calling "Disable", it's typically necessary to first "Stop", wait for 500ms, and then Disable. Otherwise, enabling it again might cause issues.
+
 - Brake (stops the running task at the same time)
 
 ```json
@@ -402,31 +404,6 @@ interface Position = {x:number, y:number, z:number, roll:number, pitch:number, y
 }
 ```
 
-- External position tracking (PID Control)
-
-```json
-// First, send SetTask to activate the external position tracking task
-{
-  "action":"SetTask",
-  "payload": {
-    "type":"ExternalPositionControlTask",
-    "args": null
-  }
-}
-
-// Afterward, commands can be sent to track the position
-{
-  "action":"ExternalPositionControl",
-  "payload": [0,0,0,0,0,0] // Tracking angle
-}
-
-{
-  "action":"ExternalPositionControl",
-  "payload": {"x":0, "y":0, "z": 0, "roll":0, "pitch": 0, "yaw": 0} // Tracking position
-}
-
-```
-
 - Real-time control
 
 ```json
@@ -436,7 +413,7 @@ interface Position = {x:number, y:number, z:number, roll:number, pitch:number, y
   "action":"SetTask",
   "payload": {
     "type":"RealTimePositionControlTask",
-    "args": null
+    "args": {"x":null, "y":null, "z": null, "roll":null, "pitch": null, "yaw": null}
   }
 }
 
@@ -503,11 +480,18 @@ interface Position = {x:number, y:number, z:number, roll:number, pitch:number, y
 }
 ```
 
-#### 2. Python SDK
+#### 2. Python SDK (experimental)
 
 ##### 2.1 Download and Use
 
 Open [link](https://github.com/WinGs-Robotics/STR400-Studio/tree/main/PythonSDK) to download the directory. Within this directory, import STR400 to access the Python SDK. Ensure the STR400 APP is running and that the robot has completed serial port connection.
+
+This SDK has been tested with Python 3.9.13.
+Before running, you need to install the required Python packages.
+
+```bash
+pip install websocket-client
+```
 
 Here's a simple example:
 
@@ -515,21 +499,84 @@ Here's a simple example:
 from STR400_SDK.str400 import STR400
 import time
 
+# Initialize the robot with the given host and port
 robot = STR400(host='localhost', port=8080)
 
-# Example usage
-response = robot.enable()
-print(response)
+# Activate the robot
+robot.enable()
+print("Robot has been successfully enabled.")
 
-time.sleep(1)
+# Command the robot to move its joints to the specified angles using MoveJ
+print(
+    "Initiating MoveJ to target angles [0, 0, 0, 0, 0, 0] over a duration of 6 seconds...")
+angles = [0, 0, 0, 0, 0, 0, 6]
+robot.movej(angles)
 
-# MoveJ command
-angles = [0, 0, 90, 0, 90, 0, 6]
-response = robot.movej(angles)
-print(response)
+# Brief pause to allow the MoveJ command to be processed
+time.sleep(0.5)
+
+# Monitor the task status and wait until the MoveJ operation is completed
+print("Monitoring task status until the MoveJ operation is completed...")
+while True:
+    task_status = robot.get_task_status()
+    if task_status.get('type') is None:  # Check if task has concluded
+        print("MoveJ operation completed.")
+        break
+    time.sleep(0.2)
+
+# Deactivate the robot after operations are done
+robot.disable()
+print("Robot is now disabled.")
 ```
 
 ##### 2.2 Available Commands
+
+Currently, the supported commands are as follows. Refer to the examples in the SDK folder for more details.
+
+##### Read Commands
+
+-**_Task Status_**: Returns the real-time status of the ongoing task. When task_status.name is null, it indicates an idle status and is ready to accept commands.
+
+```python
+task_status = robot.get_task_status()
+print("Task Status:", task_status)
+```
+
+Sample output:
+
+```python
+Task Status: {'type': 'MoveJTask', 'progress': 0.9867109634551495}
+```
+
+-**_Robot Status_**: Returns the real-time status of the robot.
+
+```python
+robot_status = robot.get_robot_status()
+print("Robot Status:", robot_status)
+```
+
+Sample output:
+
+```python
+Robot Status: {
+'jointEnabled': [1, 1, 1, 1, 1, 1],
+'jointAngle': [0, 0, 89.99176000244148, 0, 89.99176000244148, 0],
+'cartesianPosition': {'x': 2.653931355114116e-17,
+                      'y': 0.1577425676345506,
+                      'z': 0.20302268576136304,
+                      'roll': -179.983520004883,
+                      'pitch': 7.017718262059415e-15,
+                      'yaw': -90},
+'encoderAbsolutePositions': [0, 0, 0, 0, 0, 0],
+'jointTemperature': [0, 0, 0, 0, 0, 0],
+'jointSpeed': [0, 0, 0, 0, 0, 0],
+'jointErrorCode': [0, 0, 0, 0, 0, 0],
+'jointRunning': [0, 0, 0, 0, 0, 0],
+'jointCurrent': [0, 0, 0, 0, 0, 0]
+}
+```
+
+##### Write Commands
 
 -**_Initialization_**: Establish connection with the robotic arm.
 
@@ -561,12 +608,10 @@ robot.stop()
 robot.back_to_zero()
 ```
 
--**_External Position Control_**: Activate the external position control task and allow position tracking.
+-**_Activate Real-Time Position Control_**: Sends real-time position control commands to the robot. null means stop, true indicates the positive direction, and false denotes the reverse direction.
 
 ```python
-task_type = "ExternalPositionControlTask"
-args = None
-robot.external_position_control(task_type, args)
+robot.start_real_time_position_control()
 ```
 
 -**_Real-time Position Control_**: Send real-time position control command to the robot. null means stop, true means positive direction, false means reverse direction.
@@ -588,22 +633,4 @@ robot.wscript(script_content, repeatCount=1)
 ```python
 angles = [0, 0, 0, 0, 0, 0，0]
 robot.movej(angles)
-```
-
--**_MoveL_**: Move the robot to the specified Cartesian position. The first six numbers are x, y, z, roll, pitch, yaw with units in mm and ° respectively. The last number is time in seconds.
-
-```python
-positions = [0, 0, 0, 0, 0, 0, 0]
-robot.movel(positions)
-```
-
--**_MoveS_**: Make the robot pass through a series of Cartesian positions. Data format is consistent with MoveL.
-
-```python
-positions_series = [
-    [0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0]
-]
-robot.moves(positions_series)
 ```
