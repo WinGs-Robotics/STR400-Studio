@@ -22,7 +22,7 @@ This update is the first release, with a version number of v0.253.
 
 #### 1. Software Download
 
-Visit the [WinGs Robotics STR400 Studio Github page](https://github.com/WinGs-Robotics/STR400-Studio/APP) and download the entire folder. This includes the executable file and its associated configuration files.
+Visit the [WinGs Robotics STR400 Studio Github page](https://github.com/WinGs-Robotics/STR400-Studio/tree/main/APP) and download the entire folder. This includes the executable file and its associated configuration files.
 
 **System Compatibility Tested**:
 
@@ -43,7 +43,7 @@ Ensure the power source is connected and the USB data cable is properly plugged 
 
 Locate the executable file appropriate for your OS (Windows, Mac (Intel), or Linux) and launch it. Upon successful start, you will see the window as shown:
 
-![Terminal Window](https://github.com/WinGs-Robotics/STR400-Studio/raw/main/reference/terminal.png)
+![Terminal Window](https://github.com/WinGs-Robotics/STR400-Studio/raw/main/references/terminal.png)
 
 Next, open a web browser and navigate to [http://localhost:8080](http://localhost:8080) to access the APP interface.
 
@@ -61,7 +61,7 @@ Next, open a web browser and navigate to [http://localhost:8080](http://localhos
 
 Once the application is successfully launched and you've accessed its front-end interface through your browser, you'll encounter the interface as shown:
 
-![Connection Interface](https://github.com/WinGs-Robotics/STR400-Studio/raw/main/reference/connectionPage.png)
+![Connection Interface](https://github.com/WinGs-Robotics/STR400-Studio/raw/main/references/connectionPage.png)
 
 - **1**: Displays communication speed, currently supporting only a 2.25M baud rate. The refresh button on the right can help you re-detect all USB connection statuses.
 - **2**: Click to attempt connecting to the corresponding serial port.
@@ -71,7 +71,7 @@ Once the application is successfully launched and you've accessed its front-end 
 
 Upon successful connection, you will enter the main interface of the STR Studio:
 
-![Dashboard](https://github.com/WinGs-Robotics/STR400-Studio/raw/main/reference/mainPage.png)
+![Dashboard](https://github.com/WinGs-Robotics/STR400-Studio/raw/main/references/mainPage.png)
 
 - **1**: Function selection area, where you can access the dashboard, Teaching feature, W Script, and Configuration settings of the robot arm.
 - **2**: A 3D model display of the robot arm. Use your mouse to rotate, move, and zoom into the model.
@@ -83,7 +83,7 @@ Upon successful connection, you will enter the main interface of the STR Studio:
 
 By scanning the QR code on the dashboard with your phone, you can have a similar control interface on your mobile device, enabling you to control the robot arm from any position within the same local network.
 
-![Mobile Control Interface](https://github.com/WinGs-Robotics/STR400-Studio/raw/main/reference/mainPage.png)
+![Mobile Control Interface](https://github.com/WinGs-Robotics/STR400-Studio/raw/main/references/mainPage.png)
 
 #### 4. Teaching Feature
 
@@ -91,14 +91,14 @@ The teaching feature allows users to manually rotate the robot arm joints and re
 
 The **Track List Window** is as shown:
 
-![Track List](https://github.com/WinGs-Robotics/STR400-Studio/raw/main/reference/mainPage.png)
+![Track List](https://github.com/WinGs-Robotics/STR400-Studio/raw/main/references/mainPage.png)
 
 - **1**: From left to right, the function keys respectively represent: edit track, delete track, play track once, and play track in a loop.
 - **2**: By clicking the "add track" button, you can add and edit a new trajectory.
 
 When you click "edit" or "add track", you'll navigate to the detailed track editing interface:
 
-![Track Edit](https://github.com/WinGs-Robotics/STR400-Studio/raw/main/reference/teachingEditPage.png)
+![Track Edit](https://github.com/WinGs-Robotics/STR400-Studio/raw/main/references/teachingEditPage.png)
 
 - **1**: Edit the name of the track.
 - **2**: Save the current track and return to the previous menu.
@@ -108,7 +108,7 @@ When you click "edit" or "add track", you'll navigate to the detailed track edit
 
 #### 5. Running WScript
 
-![WScript Interface](https://github.com/WinGs-Robotics/STR400-Studio/raw/main/reference/WScriptPage.png)
+![WScript Interface](https://github.com/WinGs-Robotics/STR400-Studio/raw/main/references/WScriptPage.png)
 
 - **1**: From left to right on the toolbar, the functions respectively represent: execute once, repeat execution specified times, and save Script. Note that unsaved changes will be lost when switching pages.
 - **2**: Simply type the specified commands into the textbox to program the robot arm easily. WScript integrates trajectory planning functionality, ensuring that the robot arm's end position, speed, and acceleration are all continuous throughout the trajectory, guaranteeing smooth operation and preventing vibrations caused by sudden stops.
@@ -129,13 +129,13 @@ Each line can have one command. By combining these commands, you can implement m
 
 #### 6. Parameter Settings
 
-![Server Settings Interface](https://github.com/WinGs-Robotics/STR400-Studio/raw/main/reference/serverSettingPage.png)
+![Server Settings Interface](https://github.com/WinGs-Robotics/STR400-Studio/raw/main/references/serverSettingPage.png)
 
 The image above showcases the common server settings. Of particular note, the "end effector length" signifies the distance from the output shaft of the sixth joint to the user-selected end effector. When this length is set, the forward and inverse kinematics in the software will use the end of the end effector as the reference coordinate system.
 
 In the "Robot Setting" page (as shown below):
 
-![Robot Settings Interface](https://github.com/WinGs-Robotics/STR400-Studio/raw/main/reference/robotSettingPage.png)
+![Robot Settings Interface](https://github.com/WinGs-Robotics/STR400-Studio/raw/main/references/robotSettingPage.png)
 
 - **2**: The two rows of numbers can be used to set the two preset positions in the bottom right corner of **1**.
 - Using the "Read" button, you can directly read the current joint angles of the robot arm, making it convenient for you to record them.
@@ -149,7 +149,7 @@ In the "Robot Setting" page (as shown below):
 
 ### 1. Robot Arm Modeling
 
-![Robot Arm Description](https://github.com/WinGs-Robotics/STR400-Studio/raw/main/reference/robotDescription.png)
+![Robot Arm Description](https://github.com/WinGs-Robotics/STR400-Studio/raw/main/references/robotDescription.png)
 
 #### 1.1 Joint Angle Definition
 
@@ -180,7 +180,7 @@ The position shown in the figure is: first translate x=0mm, y=158mm, z=203mm. Th
 
 `MOVEL` is a linear motion command that directs the robot arm to move directly in a straight line from its current position to the target position, with both the starting and ending speeds being zero.
 
-![MOVEL Illustration](https://github.com/WinGs-Robotics/STR400-Studio/raw/main/reference/MOVEL.png)
+![MOVEL Illustration](https://github.com/WinGs-Robotics/STR400-Studio/raw/main/references/MOVEL.png)
 
 This command includes the target's Cartesian coordinates and time. The Cartesian coordinates indicate the three translations and three Euler angles relative to the robot arm's base {B}, rotating in the order of Roll, Pitch, Yaw. Time represents the duration needed to move from the current position to the target position, in seconds.
 
@@ -188,7 +188,7 @@ This command includes the target's Cartesian coordinates and time. The Cartesian
 
 Similar to `MOVEL`, but `MOVES` is primarily used to describe continuous multi-point motion. When there's only one `MOVES` command in the instruction, it functions the same as `MOVEL`. When there are multiple consecutive `MOVES` commands, the system integrates these commands, ensuring that the end of the robot arm can pass through the specified positions at the predetermined times, while also ensuring the continuity of the entire motion.
 
-![MOVES Illustration](https://github.com/WinGs-Robotics/STR400-Studio/raw/main/reference/MOVES.png)
+![MOVES Illustration](https://github.com/WinGs-Robotics/STR400-Studio/raw/main/references/MOVES.png)
 
 Each `MOVES` command also includes the target's Cartesian coordinates and time. Time indicates the duration needed to move from the previous target position to the next one, in seconds.
 
