@@ -12,15 +12,24 @@ class STR400:
         self.ws = websocket.WebSocketApp(self.uri, on_message=self.on_message)
         self.message_queue = Queue()
         self.connected = False
+        self.task_status = {}
+        self.robot_status = {}
 
         thread = threading.Thread(target=self.run_forever)
         thread.daemon = True
         thread.start()
 
-        time.sleep(2)  # 休眠一段时间确保WebSocket连接建立
+        time.sleep(2)
 
     def on_message(self, ws, message):
-        self.message_queue.put(json.loads(message))
+        data = json.loads(message)
+        event_type = data.get('event')
+        if event_type == 'TaskUpdate':
+            self.task_status = data.get('payload', {})
+        elif event_type == 'StatusUpdate':
+            self.robot_status = data.get('payload', {}).get('jointState', {})
+        else:
+            self.message_queue.put(data)
 
     def send_request(self, action, payload=None):
         data = {
@@ -29,20 +38,16 @@ class STR400:
         }
         self.ws.send(json.dumps(data))
 
-        # 返回从服务器收到的下一条消息
-        while True:
-            try:
-                return self.message_queue.get(timeout=5)
-            except Empty:
-                return None
-
     def run_forever(self):
         self.ws.run_forever()
 
     def enable(self):
         self.send_request("Enable")
+        time.sleep(1)
 
     def disable(self):
+        self.send_request("Stop")
+        time.sleep(0.5)
         self.send_request("Disable")
 
     def stop(self):
@@ -52,8 +57,9 @@ class STR400:
         payload = {"type": "BackToZeroTask"}
         self.send_request("SetTask", payload)
 
-    def external_position_control(self, task, args=None):
-        payload = {"type": task, "args": args}
+    def start_real_time_position_control(self):
+        payload = {"type": "RealTimePositionControlTask", "args": {"x": None, "y": None, "z": None,
+                                                                   "roll": None, "pitch": None, "yaw": None}}
         self.send_request("SetTask", payload)
 
     def real_time_position_control(self, values):
@@ -77,3 +83,8 @@ class STR400:
         payload = {"type": "MoveSTask", "args": positions}
         self.send_request("SetTask", payload)
 
+    def get_task_status(self):
+        return self.task_status
+
+    def get_robot_status(self):
+        return self.robot_status
