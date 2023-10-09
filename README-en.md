@@ -255,7 +255,7 @@ Similar to `MOVEL`, but `MOVES` is primarily used to describe continuous multi-p
 <p>&nbsp;</p>
 
 <div align="center">
-<img src="https://github.com/WinGs-Robotics/STR400-Studio/raw/main/references/MOVES.png" width="400">
+<img src="https://github.com/WinGs-Robotics/STR400-Studio/raw/main/references/MOVES2.png" width="400">
 </div>
 
 <p>&nbsp;</p>

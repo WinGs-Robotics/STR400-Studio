@@ -254,7 +254,7 @@ WScript 当前提供以下主要指令：
 <p>&nbsp;</p>
 
 <div align="center">
-<img src="https://github.com/WinGs-Robotics/STR400-Studio/raw/main/references/MOVES.png" width="300">
+<img src="https://github.com/WinGs-Robotics/STR400-Studio/raw/main/references/MOVES2.png" width="300">
 </div>
 
 <p>&nbsp;</p>
