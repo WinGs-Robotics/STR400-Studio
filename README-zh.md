@@ -43,8 +43,9 @@
 
 根据您的操作系统（Windows、Mac（Intel）或 Linux），找到对应的可执行文件并启动。成功启动后，您将看到如下窗口：
 
-![Terminal Window](https://github.com/WinGs-Robotics/STR400-Studio/blob/main/references/terminal.png)
-
+<div align="center">
+    <img src="https://github.com/WinGs-Robotics/STR400-Studio/raw/main/references/terminal.png" width="500">
+</div>
 随后，使用浏览器打开 [http://localhost:8080](http://localhost:8080) 以进入 APP 界面。
 
 > **注意**: 若您想在同一局域网的其他设备上访问此服务，确保 STR400 Studio 后台服务在 PC 上运行。同时，您需要知道运行`str-studio.exe`的电脑的 IP 地址，并确保 8080 端口的防火墙保护已关闭。
@@ -63,7 +64,9 @@
 
 成功启动程序后，使用浏览器访问程序的前端界面，您会看到如下的界面：
 
-![连接界面](https://github.com/WinGs-Robotics/STR400-Studio/raw/main/references/connectionPage.png)
+<div align="center">
+    <img src="https://github.com/WinGs-Robotics/STR400-Studio/raw/main/references/connectionPage.png" width="800">
+</div>
 
 - **1**：显示通讯速率，目前仅支持 2.25M 波特率。右侧的刷新按钮可以帮助您重新检测所有的 USB 连接状态。
 - **2**：点击可以尝试连接到对应的串口。
@@ -73,7 +76,9 @@
 
 一旦连接成功，您将进入到 STR Studio 的主界面：
 
-![仪表盘界面](https://github.com/WinGs-Robotics/STR400-Studio/raw/main/references/mainPage.png)
+<div align="center">
+<img src="https://github.com/WinGs-Robotics/STR400-Studio/raw/main/references/mainPage.png" width="800">
+</div>
 
 - **1**：功能选择区域，可以查看机械臂的仪表盘、Teaching 功能、W Script 和 Configuration 设置。
 - **2**：机械臂的三维模型展示，您可以使用鼠标来旋转、位移和缩放模型。
@@ -85,7 +90,9 @@
 
 通过手机扫描仪表盘上的二维码，您可以在手机上得到与主界面相似的控制界面。该功能使得您可以在同一局域网内的任意位置控制机械臂。
 
-![手机控制界面](https://github.com/WinGs-Robotics/STR400-Studio/raw/main/references/mainPage.png)
+<div align="center">
+<img src="https://github.com/WinGs-Robotics/STR400-Studio/raw/main/references/mobilePage.png" width="300">
+</div>
 
 #### 4. 示教功能
 
@@ -93,15 +100,18 @@
 
 **Track 列表窗口**如下所示：
 
-![Track列表界面](https://github.com/WinGs-Robotics/STR400-Studio/raw/main/references/mainPage.png)
+<div align="center">
+<img src="https://github.com/WinGs-Robotics/STR400-Studio/raw/main/references/teachingPage.png" width="800">
+</div>
 
 - **1**： 从左到右，功能键分别代表：编辑 track、删除 track、单次播放 track、重复播放 track。
 - **2**： 通过点击“add track”按钮，您可以新增并编辑一条轨迹。
 
 点击“编辑”或“新增轨迹”后，您将进入到轨迹的详细编辑界面：
 
-![轨迹编辑界面](https://github.com/WinGs-Robotics/STR400-Studio/raw/main/references/teachingEditPage.png)
-
+<div align="center">
+<img src="https://github.com/WinGs-Robotics/STR400-Studio/raw/main/references/teachingEditPage.png" width="800">
+</div>
 - **1**： 编辑轨迹的名称。
 - **2**： 保存当前轨迹并返回至上一菜单。
 - **3**： 在这里添加新的动作。可以选择记录当前位置，或者添加“等待”动作。当选择记录当前位置后，您可以决定使用 **MoveJ**、**MoveL** 或 **MoveS** 中的哪一种方法来移动到该关键点。这三个指令的作用等同于下一小节中 WScript 的**A:MoveJ**、**A:MoveL** 和 **A:MoveS**。
@@ -110,7 +120,9 @@
 
 #### 5. 运行 WScript
 
-![WScript界面](https://github.com/WinGs-Robotics/STR400-Studio/raw/main/references/WScriptPage.png)
+<div align="center">
+<img src="https://github.com/WinGs-Robotics/STR400-Studio/raw/main/references/WScriptPage.png" width="800">
+</div>
 
 - **1**： 工具栏上从左到右的功能分别为：执行一遍、按指定次数重复执行、保存 Script。请注意，未保存的更改在切换页面后会被丢失。
 - **2**： 您只需在文本框中输入指定的指令，即可轻松地为机械臂编程。WScript 内置了轨迹规划功能，确保机械臂的末端在运行轨迹中位置、速度、加速度都是连续的，从而确保运行的流畅性，并防止因急停引起的震动。
@@ -131,13 +143,17 @@ WScript 当前提供以下主要指令：
 
 #### 6. 参数设置
 
-![上位机设置界面](https://github.com/WinGs-Robotics/STR400-Studio/raw/main/references/serverSettingPage.png)
+<div align="center">
+<img src="https://github.com/WinGs-Robotics/STR400-Studio/raw/main/references/serverSettingPage.png" width="800">
+</div>
 
 上述图像展示了常用的上位机设置。特别要注意的是，“末端执行器长度”表示从第六个关节的输出轴到用户选择的末端执行器的长度。当您设置了这个长度后，软件中的正逆运动学会将末端执行器的末端作为参考坐标系。
 
 在“Robot Setting”页面（如下图所示）：
 
-![Robot设置界面](https://github.com/WinGs-Robotics/STR400-Studio/raw/main/references/robotSettingPage.png)
+<div align="center">
+<img src="https://github.com/WinGs-Robotics/STR400-Studio/raw/main/references/robotSettingPage.png" width="800">
+</div>
 
 - **2** 的两行数字可以用来设置 **1** 中右下角的两个预设位置。
 - 使用“Read”按钮，您可以直接读取当前机械臂的关节角度，方便您进行记录。
@@ -151,7 +167,9 @@ WScript 当前提供以下主要指令：
 
 ### 1. 机械臂建模
 
-![机械臂描述](https://github.com/WinGs-Robotics/STR400-Studio/raw/main/references/robotDescription.png)
+<div align="center">
+<img src="https://github.com/WinGs-Robotics/STR400-Studio/raw/main/references/robotDescription.png" width="800">
+</div>
 
 #### 1.1 关节角定义
 
@@ -182,7 +200,9 @@ WScript 当前提供以下主要指令：
 
 `MOVEL` 是一种线性运动命令，它使机械臂从当前位置直接沿直线移动到目标位置，开始和结束时的速度都为零。
 
-![MOVEL Illustration](https://github.com/WinGs-Robotics/STR400-Studio/raw/main/references/MOVEL.png)
+<div align="center">
+<img src="https://github.com/WinGs-Robotics/STR400-Studio/raw/main/references/MOVEL.png" width="300">
+</div>
 
 此命令包含目标位置的笛卡尔坐标及时间。笛卡尔坐标表示相对于机械臂基座{B}的三个平移量和三个欧拉角，按 Roll、Pitch、Yaw 的顺序进行旋转。时间表示从当前位置移动到目标位置所需的时长，单位为秒。
 
@@ -190,7 +210,9 @@ WScript 当前提供以下主要指令：
 
 与 `MOVEL` 相似，但 `MOVES` 主要用于描述连续的多点运动。当指令中只有一条 `MOVES` 命令时，它与 `MOVEL` 相同。当有连续多条 `MOVES` 命令时，系统将整合这些命令，保证机械臂末端可以按预定时间点经过指定的位置，并确保整个运动过程的连续性。
 
-![MOVES Illustration](https://github.com/WinGs-Robotics/STR400-Studio/raw/main/references/MOVES.png)
+<div align="center">
+<img src="https://github.com/WinGs-Robotics/STR400-Studio/raw/main/references/MOVES.png" width="300">
+</div>
 
 每条 `MOVES` 命令也包含目标位置的笛卡尔坐标及时间。时间指从前一个目标位置移动到下一个所需的时长，单位为秒。
 
