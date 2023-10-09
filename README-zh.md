@@ -67,7 +67,7 @@
 <p>&nbsp;</p>
 
 <div align="center">
-    <img src="https://github.com/WinGs-Robotics/STR400-Studio/raw/main/references/connectionPage.png"  width="800">
+    <img src="https://github.com/WinGs-Robotics/STR400-Studio/raw/main/references/connectionPage.png"  width="1000">
 </div>
 
 <p>&nbsp;</p>
@@ -83,7 +83,7 @@
 <p>&nbsp;</p>
 
 <div align="center">
-<img src="https://github.com/WinGs-Robotics/STR400-Studio/raw/main/references/mainPage.png"  width="800">
+<img src="https://github.com/WinGs-Robotics/STR400-Studio/raw/main/references/mainPage.png"  width="1000">
 </div>
 
 <p>&nbsp;</p>
@@ -115,7 +115,7 @@
 <p>&nbsp;</p>
 
 <div align="center">
-<img src="https://github.com/WinGs-Robotics/STR400-Studio/raw/main/references/teachingPage.png"  width="800">
+<img src="https://github.com/WinGs-Robotics/STR400-Studio/raw/main/references/teachingPage.png"  width="1000">
 </div>
 
 <p>&nbsp;</p>
@@ -128,7 +128,7 @@
 <p>&nbsp;</p>
 
 <div align="center">
-<img src="https://github.com/WinGs-Robotics/STR400-Studio/raw/main/references/teachingEditPage.png"  width="800">
+<img src="https://github.com/WinGs-Robotics/STR400-Studio/raw/main/references/teachingEditPage.png"  width="1000">
 </div>
 
 <p>&nbsp;</p>
@@ -144,7 +144,7 @@
 <p>&nbsp;</p>
 
 <div align="center">
-<img src="https://github.com/WinGs-Robotics/STR400-Studio/raw/main/references/WScriptPage.png"  width="800">
+<img src="https://github.com/WinGs-Robotics/STR400-Studio/raw/main/references/WScriptPage.png"  width="1000">
 </div>
 
 <p>&nbsp;</p>
@@ -171,7 +171,7 @@ WScript 当前提供以下主要指令：
 <p>&nbsp;</p>
 
 <div align="center">
-<img src="https://github.com/WinGs-Robotics/STR400-Studio/raw/main/references/serverSettingPage.png"  width="800">
+<img src="https://github.com/WinGs-Robotics/STR400-Studio/raw/main/references/serverSettingPage.png"  width="1000">
 </div>
 
 <p>&nbsp;</p>
@@ -183,7 +183,7 @@ WScript 当前提供以下主要指令：
 <p>&nbsp;</p>
 
 <div align="center">
-<img src="https://github.com/WinGs-Robotics/STR400-Studio/raw/main/references/robotSettingPage.png"  width="800">
+<img src="https://github.com/WinGs-Robotics/STR400-Studio/raw/main/references/robotSettingPage.png"  width="1000">
 </div>
 
 <p>&nbsp;</p>
@@ -203,7 +203,7 @@ WScript 当前提供以下主要指令：
 <p>&nbsp;</p>
 
 <div align="center">
-<img src="https://github.com/WinGs-Robotics/STR400-Studio/raw/main/references/robotDescription.png"  width="800">
+<img src="https://github.com/WinGs-Robotics/STR400-Studio/raw/main/references/robotDescription.png"  width="1000">
 </div>
 
 <p>&nbsp;</p>
