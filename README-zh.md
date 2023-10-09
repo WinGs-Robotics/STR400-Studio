@@ -287,4 +287,230 @@ A: MOVES X6, Y6, Z6, Roll6, Pitch6, Yaw6, Time6
 
 <a name="python-api示例"></a>
 
-暂无
+#### 1. WebSocket APIs
+
+##### 1.1 Websocket 服务
+
+服务端口: 默认为 8080，可以在 `参数设置` > `上位机设置`处更改  
+Websocket URI 为 `/api/ws` , 本机访问地址：`ws://localhost:{port}/api/ws`
+
+##### 1.2 数据格式
+
+数据格式为 json 字符串
+
+##### 1.3 更新频率
+
+上位机的获取机械臂信息频率约为 80HZ，发送命令至机械臂频率也为 80HZ
+
+过快发送的命令会被丢弃，上位机同步以最后收到的前端指令为准
+
+###### 1.4 上位机主动信息
+
+上位机会主动推送机械臂的状态更新，50HZ 更新频率
+
+```typescript
+{
+  event: StatusUpdate,
+  payload:
+  {
+    jointState: {
+      jointEnabled: JointVector; // 伺服状态 (0:关闭/1:打开)
+      encoderAbsolutePositions: JointVector; // 编码器绝对读数 0 ～ 32767
+      jointAngle: JointVector, // 关节角 -180 ~ 180
+      cartesianPosition: Position, // 迪卡尔坐标
+      jointTemperature: JointVector; // 关节温度
+      jointErrorCode: JointVector; // 故障代码(0:正常,1:欠压,2:高温,3:过载)
+    };
+    jointSetting: {
+      jointMaxCurrent: JointVector; // 设置电机上限电流[单位:MA](堵转停止不警报)
+      jointAccelerationDuration: JointVector; // 电机加速度时间(单位:毫秒)
+      jointDecelerationDuration: JointVector; // 电机减速度时间(单位:毫秒)
+      jointTargetSpeed: JointVector; // 电机运行速度[单位:(转/分钟)]
+      jointPositionKp: JointVector; // Kp1 比例系数(比例,数值越大刚性越强)
+      jointPositionKi: JointVector; // Ki1 积分系数(定位,消除稳态误差)
+      jointPositionKd: JointVector; // Kd1 微分系数(阻尼,防止震荡)
+    };
+    connected: boolean; // 串口是否连接
+  }
+}
+
+
+```
+
+上位机会主动推送机械臂任务运行状态至客户端
+其中两个重要数据类型如下所示
+
+```typescript
+interface JointVector = [number, number, number, number, number, number] // JointVector是一个有六个float的数组，单位是度
+interface Position = {x:number, y:number, z:number, roll:number, pitch:number, yaw:number} //Position是一个json数据，单位时m和度
+```
+
+```typescript
+{
+  event: TaskUpdate,
+  payload:
+  {
+    type: string | null, // task的名称, null 则为task运行完成
+    progress: number, // 0 ~ 1. task的运行进度，0 ~ 1 的浮点数
+  }
+}
+
+
+{
+  event: StatusUpdate,
+  payload:
+  {
+    jointState: {
+        jointEnabled: JointVector; //电机是否被驱动
+        jointAngle: JointVector; //当前角度
+        cartesianPosition: Position;//当前末端位置
+        jointSpeed: JointVector; //当前电机转速
+        jointErrorCode: JointVector;//各个电机的错误代码
+        jointCurrent: JointVector;//各个电机的当前电流大小
+     };
+  }
+}
+```
+
+##### 1.5 下位机可用命令
+
+- 启动
+
+```json
+{
+  "action": "Enable",
+  "payload": null
+}
+```
+
+- 停止
+
+```json
+{
+  "action": "Disable",
+  "payload": null
+}
+```
+
+- 制动 (同时停止正在运行的任务)
+
+```json
+{
+  "action": "Stop",
+  "payload": null
+}
+```
+
+- 关节归零
+
+```json
+{
+  "action": "SetTask",
+  "payload": {
+    "type": "BackToZeroTask"
+  }
+}
+```
+
+- 外部位置追踪（PID 控制）
+
+```json
+
+// 首先发送SetTask激活外部位置追踪任务
+{
+  "action":"SetTask",
+  "payload": {
+    "type":"ExternalPositionControlTask",
+    "args": null
+  }
+}
+
+// 之后可以发送命令来追踪位置
+{
+  "action":"ExternalPositionControl",
+  "payload": [0,0,0,0,0,0] // 追踪角度
+}
+
+{
+  "action":"ExternalPositionControl",
+  "payload": {"x":0, "y":0, "z": 0, "roll":0, "pitch": 0, "yaw": 0} // 追踪位置
+}
+
+```
+
+- 实时控制
+
+```json
+
+// 首先发送SetTask激活外部位置追踪任务
+{
+  "action":"SetTask",
+  "payload": {
+    "type":"RealTimePositionControlTask",
+    "args": null
+  }
+}
+
+// 之后可以发送命令来实时控制
+
+{
+  "action":"RealTimePositionControl",
+  "payload": {"x":null, "y":null, "z": null, "roll":null, "pitch": null, "yaw": null} // null为这个维度停止，true为这个维度相对位置增加，false为这个维度相对位置减小
+}
+
+```
+
+- WScript
+
+```json
+{
+  "action": "SetTask",
+  "payload": {
+    "type": "WScriptTask",
+    "args": {
+      "script": "...", // WScript： 整个脚本的字符串
+      "repeatCount": 1 // 重复次数，可选
+    }
+  }
+}
+```
+
+- MoveJ
+
+```json
+{
+  "action": "SetTask",
+  "payload": {
+    "type": "MoveJTask",
+    "args": [0, 0, 0, 0, 0, 0] //关节角位置
+  }
+}
+```
+
+- MoveL
+
+```json
+{
+  "action": "SetTask",
+  "payload": {
+    "type": "MoveLTask",
+    "args": [0, 0, 0, 0, 0, 0] //笛卡尔位置
+  }
+}
+```
+
+- MoveS
+
+```json
+{
+  "action": "SetTask",
+  "payload": {
+    "type": "MoveSTask",
+    "args": [
+      [0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0]
+    ] //数个笛卡尔位置
+  }
+}
+```
