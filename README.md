@@ -11,7 +11,7 @@
 2. [Download & Installation](#download--installation)
 3. [UI Feature Overview](#ui-feature-overview)
 4. [STR400 Robotic Arm Kinematics Model & Motion Planning Methods](#str400-robotic-arm-kinematics-model--motion-planning-methods)
-5. [websocket APIs and Python SDK](#python-api-examples)
+5. [websocket APIs and Python SDK](#python-api-example)
 
 ---
 
