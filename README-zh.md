@@ -4,7 +4,7 @@
 2. [下载与安装](#下载与安装)
 3. [UI 界面功能介绍](#ui界面功能介绍)
 4. [STR400 机械臂 kinematics 模型&运动规划方法](#str400-机械臂kinematics模型运动规划方法)
-5. [Python API 示例](#python-api示例)
+5. [Websocket API 和 Python SDK](#python-api示例)
 
 ---
 
@@ -283,7 +283,7 @@ A: MOVES X6, Y6, Z6, Roll6, Pitch6, Yaw6, Time6
 
 ---
 
-### Python API 示例
+### WebSocket APIs 和 Python SDK
 
 <a name="python-api示例"></a>
 
@@ -482,7 +482,7 @@ interface Position = {x:number, y:number, z:number, roll:number, pitch:number, y
   "action": "SetTask",
   "payload": {
     "type": "MoveJTask",
-    "args": [0, 0, 0, 0, 0, 0] //关节角位置
+    "args": [0, 0, 0, 0, 0, 0, 0] //关节角位置，单位是度，最后一位是时间单位是秒
   }
 }
 ```
@@ -494,7 +494,7 @@ interface Position = {x:number, y:number, z:number, roll:number, pitch:number, y
   "action": "SetTask",
   "payload": {
     "type": "MoveLTask",
-    "args": [0, 0, 0, 0, 0, 0] //笛卡尔位置
+    "args": [0, 0, 0, 0, 0, 0, 0] //笛卡尔位置, 单位是mm和度，最后一位是时间单位是秒
   }
 }
 ```
@@ -507,10 +507,115 @@ interface Position = {x:number, y:number, z:number, roll:number, pitch:number, y
   "payload": {
     "type": "MoveSTask",
     "args": [
-      [0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0]
-    ] //数个笛卡尔位置
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0]
+    ] //数个笛卡尔位置，数据和MoveLTask一致
   }
 }
+```
+
+#### 2. Python SDK
+
+##### 2.1 下载并使用
+
+打开[link](https://github.com/WinGs-Robotics/STR400-Studio/tree/main/PythonSDK),下载这个文件夹，在这个文件夹里 import STR400，可以得到 Python 的 SDK，需要 STR400 的 APP 运行着，并且和机械臂已经完成串口连接。
+
+以下是一个简单的示例：
+
+```python
+from STR400_SDK.str400 import STR400
+import time
+
+robot = STR400(base_url="ws://localhost:8080/api/ws")
+
+# Example usage
+response = robot.enable()
+print(response)
+
+time.sleep(500)
+
+# MoveJ command
+angles = [0, 0, 90, 0, 90, 0]
+response = robot.movej(angles)
+print(response)
+```
+
+##### 2.2 可用命令
+
+-**_初始化_**: 与机械臂建立连接。
+
+```python
+robot = STR400(base_url="ws://localhost:8080/api/ws")
+```
+
+-**_启动机器人_**: 启动机械臂。
+
+```python
+robot.enable()
+```
+
+-**_禁用机器人_**: 禁用机械臂。
+
+```python
+robot.disable()
+```
+
+-**_停止机器人_**: 立即停止机械臂。
+
+```python
+robot.stop()
+```
+
+-**_回归零位置_**: 将所有机器人关节移动到其零位置，并校准。
+
+```python
+robot.back_to_zero()
+```
+
+-**_外部位置控制_**: 激活外部位置控制任务并允许跟踪位置。
+
+```python
+task_type = "ExternalPositionControlTask"
+args = None
+robot.external_position_control(task_type, args)
+```
+
+-**_实时位置控制_**: 向机器人发送实时位置控制命令, null 为停止，true 为正方向，false 为反方向
+
+```python
+values = {"x":null, "y":null, "z": null, "roll":null, "pitch": null, "yaw": null} #boolean or null
+robot.real_time_position_control(values)
+```
+
+-**_执行 WScript_**: 在机器人上执行给定的 WScript。
+
+```python
+script_content = "... 你的脚本 ..."
+robot.wscript(script_content, repeatCount=1)
+```
+
+-**_MoveJ_**: 将机器人关节移动到指定的角度，六个角度，最后一位是时间，单位是秒
+
+```python
+angles = [0, 0, 0, 0, 0, 0，0]
+robot.movej(angles)
+```
+
+-**_MoveL_**: 将机器人移动到指定的笛卡尔位置。前六个数是 x, y, z, roll, pitch, yaw 单位分别是 mm 和 °，最后一个数是时间，单位是秒
+
+```python
+positions = [0, 0, 0, 0, 0, 0, 0]
+robot.movel(positions)
+```
+
+-**_MoveS_**: 使机器人经过一系列笛卡尔位置。数据格式和 MoveL 一致
+
+```python
+positions_series = [
+    [0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0]
+]
+robot.moves(positions_series)
 ```

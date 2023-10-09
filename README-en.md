@@ -5,7 +5,7 @@
 2. [Download & Installation](#download--installation)
 3. [UI Feature Overview](#ui-feature-overview)
 4. [STR400 Robotic Arm Kinematics Model & Motion Planning Methods](#str400-robotic-arm-kinematics-model--motion-planning-methods)
-5. [Python API Examples](#python-api-examples)
+5. [websocket APIs and Python SDK](#python-api-examples)
 ---
 
 ### Version Information & Update Log
@@ -268,10 +268,335 @@ The three main considerations for trajectory planning:
 
 ---
 
-### Python API Examples
+### WebSocket APIs and Python SDK
 
-<a name="python-api-examples"></a>
+<a name="python-api-example"></a>
 
-Currently, the Python API for STR400 Robotic Arm is under development. We will provide an update when more information becomes available.
+#### 1. WebSocket APIs
 
----
+##### 1.1 Websocket Service
+
+Service Port: Defaults to 8080, can be changed in `Parameter Settings` > `Host Computer Settings`  
+Websocket URI is `/api/ws`, local access address: `ws://localhost:{port}/api/ws`
+
+##### 1.2 Data Format
+
+The data format is a json string.
+
+##### 1.3 Update Frequency
+
+The frequency at which the host computer retrieves robotic arm information is approximately 80HZ, and the frequency to send commands to the robotic arm is also 80HZ.
+
+Commands sent too quickly will be discarded, and the host computer synchronizes according to the last received frontend instruction.
+
+###### 1.4 Information Initiated by the Host Computer
+
+The host computer will actively push updates on the state of the robotic arm with a 50HZ update frequency.
+
+```typescript
+{
+  event: "StatusUpdate",
+  payload:
+  {
+    jointState: {
+      jointEnabled: JointVector; // Servo status (0:Off/1:On)
+      encoderAbsolutePositions: JointVector; // Encoder absolute reading 0 ~ 32767
+      jointAngle: JointVector, // Joint angle -180 ~ 180
+      cartesianPosition: Position, // Cartesian coordinates
+      jointTemperature: JointVector; // Joint temperature
+      jointErrorCode: JointVector; // Error code (0:Normal,1:Under-voltage,2:High temperature,3:Overload)
+    };
+    jointSetting: {
+      jointMaxCurrent: JointVector; // Set motor upper limit current[unit:MA](stall without warning)
+      jointAccelerationDuration: JointVector; // Motor acceleration time (unit: milliseconds)
+      jointDecelerationDuration: JointVector; // Motor deceleration time (unit: milliseconds)
+      jointTargetSpeed: JointVector; // Motor operating speed[unit:(revolutions/minute)]
+      jointPositionKp: JointVector; // Kp1 proportional coefficient (proportionality, larger value means higher stiffness)
+      jointPositionKi: JointVector; // Ki1 integral coefficient (positioning, eliminates steady-state error)
+      jointPositionKd: JointVector; // Kd1 differential coefficient (damping, prevents oscillation)
+    };
+    connected: boolean; // Whether the serial port is connected
+  }
+}
+```
+
+The host computer will actively push the operational status of the robotic arm task to the client. The two important data types are as shown below:
+
+```typescript
+interface JointVector = [number, number, number, number, number, number] // JointVector is an array with six floats, unit is degrees
+interface Position = {x:number, y:number, z:number, roll:number, pitch:number, yaw:number} //Position is a json data, unit is meters and degrees
+
+```
+
+```typescript
+{
+  event: "TaskUpdate",
+  payload:
+  {
+    type: string | null, // name of the task, null means the task has completed
+    progress: number, // 0 ~ 1. progress of the task, a float number from 0 to 1
+  }
+}
+
+{
+  event: "StatusUpdate",
+  payload:
+  {
+    jointState: {
+      jointEnabled: JointVector; // Whether the motor is being driven
+      jointAngle: JointVector; // Current angle
+      cartesianPosition: Position; // Current end position
+      jointSpeed: JointVector; // Current motor speed
+      jointErrorCode: JointVector; // Error codes for each motor
+      jointCurrent: JointVector; // Current current size for each motor
+    };
+  }
+}
+
+```
+
+##### 1.5 Available Commands for Lower Machine
+
+- Start
+
+```json
+{
+  "action": "Enable",
+  "payload": null
+}
+```
+
+- Stop
+
+```json
+{
+  "action": "Disable",
+  "payload": null
+}
+```
+
+- Brake (stops the running task at the same time)
+
+```json
+{
+  "action": "Stop",
+  "payload": null
+}
+```
+
+- Reset joint to zero
+
+```json
+{
+  "action": "SetTask",
+  "payload": {
+    "type": "BackToZeroTask"
+  }
+}
+```
+
+- External position tracking (PID Control)
+
+```json
+// First, send SetTask to activate the external position tracking task
+{
+  "action":"SetTask",
+  "payload": {
+    "type":"ExternalPositionControlTask",
+    "args": null
+  }
+}
+
+// Afterward, commands can be sent to track the position
+{
+  "action":"ExternalPositionControl",
+  "payload": [0,0,0,0,0,0] // Tracking angle
+}
+
+{
+  "action":"ExternalPositionControl",
+  "payload": {"x":0, "y":0, "z": 0, "roll":0, "pitch": 0, "yaw": 0} // Tracking position
+}
+
+```
+
+- Real-time control
+
+```json
+
+// First, send SetTask to activate the external position tracking task
+{
+  "action":"SetTask",
+  "payload": {
+    "type":"RealTimePositionControlTask",
+    "args": null
+  }
+}
+
+// Afterward, commands can be sent for real-time control
+{
+  "action":"RealTimePositionControl",
+  "payload": {"x":null, "y":null, "z": null, "roll":null, "pitch": null, "yaw": null} // null means stop this dimension, true means increase this relative position, false means decrease this relative position
+}
+
+```
+
+- WScript
+
+```json
+{
+  "action": "SetTask",
+  "payload": {
+    "type": "WScriptTask",
+    "args": {
+      "script": "...", // WScript: string of the entire script
+      "repeatCount": 1 // Number of repetitions, optional
+    }
+  }
+}
+```
+
+- MoveJ
+
+```json
+{
+  "action": "SetTask",
+  "payload": {
+    "type": "MoveJTask",
+    "args": [0, 0, 0, 0, 0, 0, 0] // Joint angle positions, unit is degrees, the last one is time, unit is seconds
+  }
+}
+```
+
+- MoveL
+
+```json
+{
+  "action": "SetTask",
+  "payload": {
+    "type": "MoveLTask",
+    "args": [0, 0, 0, 0, 0, 0, 0] // Cartesian positions, unit is mm and degrees, the last one is time, unit is seconds
+  }
+}
+```
+
+- MoveS
+
+```json
+{
+  "action": "SetTask",
+  "payload": {
+    "type": "MoveSTask",
+    "args": [
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0]
+    ] // Several Cartesian positions, data is consistent with MoveLTask
+  }
+}
+```
+
+#### 2. Python SDK
+
+##### 2.1 Download and Use
+
+Open [link](https://github.com/WinGs-Robotics/STR400-Studio/tree/main/PythonSDK) to download the directory. Within this directory, import STR400 to access the Python SDK. Ensure the STR400 APP is running and that the robot has completed serial port connection.
+
+Here's a simple example:
+
+```python
+from STR400_SDK.str400 import STR400
+import time
+
+robot = STR400(base_url="ws://localhost:8080/api/ws")
+
+# Example usage
+response = robot.enable()
+print(response)
+
+time.sleep(500)
+
+# MoveJ command
+angles = [0, 0, 90, 0, 90, 0]
+response = robot.movej(angles)
+print(response)
+```
+
+##### 2.2 Available Commands
+
+-**_Initialization_**: Establish connection with the robotic arm.
+
+```python
+robot = STR400(base_url="ws://localhost:8080/api/ws")
+```
+
+-**_Enable Robot_**: Start the robotic arm.
+
+```python
+robot.enable()
+```
+
+-**_Disable Robot_**: Disable the robotic arm.
+
+```python
+robot.disable()
+```
+
+-**_Stop Robot_**: Immediately stop the robotic arm.
+
+```python
+robot.stop()
+```
+
+-**_Return to Zero Position_**: Move all robot joints to their zero position and calibrate.
+
+```python
+robot.back_to_zero()
+```
+
+-**_External Position Control_**: Activate the external position control task and allow position tracking.
+
+```python
+task_type = "ExternalPositionControlTask"
+args = None
+robot.external_position_control(task_type, args)
+```
+
+-**_Real-time Position Control_**: Send real-time position control command to the robot. null means stop, true means positive direction, false means reverse direction.
+
+```python
+values = {"x":null, "y":null, "z": null, "roll":null, "pitch": null, "yaw": null} #boolean or null
+robot.real_time_position_control(values)
+```
+
+-**_Execute WScript_**:Execute the given WScript on the robot.
+
+```python
+script_content = "... your script ..."
+robot.wscript(script_content, repeatCount=1)
+```
+
+-**_MoveJ_**: Move robot joints to specified angles. Six angles, the last one is time in seconds.
+
+```python
+angles = [0, 0, 0, 0, 0, 0，0]
+robot.movej(angles)
+```
+
+-**_MoveL_**: Move the robot to the specified Cartesian position. The first six numbers are x, y, z, roll, pitch, yaw with units in mm and ° respectively. The last number is time in seconds.
+
+```python
+positions = [0, 0, 0, 0, 0, 0, 0]
+robot.movel(positions)
+```
+
+-**_MoveS_**: Make the robot pass through a series of Cartesian positions. Data format is consistent with MoveL.
+
+```python
+positions_series = [
+    [0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0]
+]
+robot.moves(positions_series)
+```
