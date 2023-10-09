@@ -527,16 +527,16 @@ interface Position = {x:number, y:number, z:number, roll:number, pitch:number, y
 from STR400_SDK.str400 import STR400
 import time
 
-robot = STR400(base_url="ws://localhost:8080/api/ws")
+robot = STR400(host='localhost', port=8080)
 
 # Example usage
 response = robot.enable()
 print(response)
 
-time.sleep(500)
+time.sleep(1)
 
 # MoveJ command
-angles = [0, 0, 90, 0, 90, 0]
+angles = [0, 0, 90, 0, 90, 0, 6]
 response = robot.movej(angles)
 print(response)
 ```
@@ -546,7 +546,7 @@ print(response)
 -**_初始化_**: 与机械臂建立连接。
 
 ```python
-robot = STR400(base_url="ws://localhost:8080/api/ws")
+robot = STR400(host='localhost', port=8080)
 ```
 
 -**_启动机器人_**: 启动机械臂。
