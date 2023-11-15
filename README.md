@@ -19,7 +19,17 @@
 
 <a name="version-information--update-log"></a>
 
-This update is the first update, with a version serial number of v0.253.
+#### version serial number: v0.255.
+
+##### Updatas:
+
+##### 1. When CRC not match, arm disabled automatically
+
+#### version serial number: v0.253.
+
+##### Updatas:
+
+##### 1. First Update
 
 ---
 
@@ -262,7 +272,7 @@ Similar to `MOVEL`, but `MOVES` is primarily used to describe continuous multi-p
 <p>&nbsp;</p>
 
 <div align="center">
-<img src="https://github.com/WinGs-Robotics/STR400-Studio/raw/main/references/MOVES2.png" width="400">
+<img src="https://github.com/WinGs-Robotics/STR400-Studio/raw/main/references/MOVES2.png" width="300">
 </div>
 
 <p>&nbsp;</p>

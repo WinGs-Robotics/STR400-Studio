@@ -10,9 +10,23 @@
 
 ### 版本信息 & 更新日志
 
-<a name="版本信息--更新日志"></a>
+---
 
-此次更新为第一次更新，版本序列号为 v0.253
+### Version Information & Update Log
+
+<a name="version-information--update-log"></a>
+
+#### 序列号: v0.255.
+
+##### Updatas:
+
+##### 1. When CRC not match, arm disabled automatically
+
+#### 序列号: v0.253.
+
+##### Updatas:
+
+##### 1. First Update
 
 ---
 
