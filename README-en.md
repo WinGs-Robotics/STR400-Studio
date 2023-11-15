@@ -12,17 +12,15 @@
 
 <a name="version-information--update-log"></a>
 
-#### version serial number: v0.255.
+### v0.255
 
-##### Updatas:
+- **Updates:**
+  - Arm disabled automatically when CRC does not match.
 
-##### 1. When CRC not match, arm disabled automatically
+### v0.253
 
-#### version serial number: v0.253.
-
-##### Updatas:
-
-##### 1. First Update
+- **Updates:**
+  - Initial release.
 
 ---
 
