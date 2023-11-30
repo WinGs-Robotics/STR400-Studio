@@ -1,4 +1,10 @@
+### ”Ô—‘—°‘Ò Language Selection
+
+- [English](README-en.md)
+- [÷–Œƒ](README-zh.md)
+
 ---
+
 ### Table of Contents
 
 1. [Version Information & Update Log](#version-information--update-log)
@@ -6,6 +12,7 @@
 3. [UI Feature Overview](#ui-feature-overview)
 4. [STR400 Robotic Arm Kinematics Model & Motion Planning Methods](#str400-robotic-arm-kinematics-model--motion-planning-methods)
 5. [websocket APIs and Python SDK](#python-api-examples)
+
 ---
 
 ### Version Information & Update Log
