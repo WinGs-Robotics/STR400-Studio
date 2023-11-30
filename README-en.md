@@ -12,6 +12,11 @@
 
 <a name="version-information--update-log"></a>
 
+### v0.256
+
+- **Updates:**
+  - Added a new task: MoveC. This new task allows the robotic arm to move from its current position to a target position within the Cartesian coordinate system. Unlike MoveL, MoveC does not require the movement path to be a straight line, thus relaxing constraints. This flexibility makes it feasible for the arm to operate efficiently near the edges of its workspace, in areas where Inverse Kinematics (IK) solutions are discontinuous, or close to singularity points.
+
 ### v0.255
 
 - **Updates:**
@@ -164,10 +169,12 @@ Upon clicking "Edit" or "Add Track", you'll be directed to the detailed track ed
 WScript currently provides the following main commands:
 
 - **A:MOVEJ** - Move from the current position to the given absolute rotation joint angle within the specified time.
-- **A:MOVEL** - Move from the current endpoint position to the given absolute Cartesian coordinate position within the specified time.
+- **A:MOVEC** - Moves the robotic arm to a predetermined absolute Cartesian coordinate position from its current position within a specified time, following a non-linear path.
+- **A:MOVEL** - Moves the robotic arm to a predetermined absolute Cartesian coordinate position from its current position within a specified time, following a linear path.
 - **A:MOVES** - Move from the current endpoint position through a series of given absolute Cartesian coordinate positions within the specified time.
 - **R:MOVEJ** - Move from the current position to the given relative rotation joint angle within the specified time.
-- **R:MOVEL** - Move from the current endpoint position to the given relative Cartesian coordinate position within the specified time.
+- **A:MOVEC** - Moves the robotic arm to a relative Cartesian coordinate position from its current position within a specified time, via a non-linear path.
+- **R:MOVEL** - Moves the robotic arm to a relative Cartesian coordinate position from its current position within a specified time, via a linear path.
 - **R:MOVES** - Move from the current endpoint position through a series of given relative Cartesian coordinate positions within the specified time.
 - **WAIT** - Wait for the specified time.
 
@@ -255,6 +262,12 @@ The position shown in the image is: first, translate x=0mm, y=158mm, z=203mm. Th
 <p>&nbsp;</p>
 
 This command contains the target position's Cartesian coordinates and time. Cartesian coordinates represent three translations and three Euler angles relative to the robotic arm's base {B}, rotating in the order Roll, Pitch, Yaw. Time indicates the duration required to move from the current position to the target position, in seconds.
+
+#### 2.1 MOVEL
+
+`MOVEC` is a curved motion command that allows the robotic arm to move from its current position to a target position along a non-linear path.
+
+This command specifies the target position's Cartesian coordinates and the required time. Similar to `MOVEL`, the Cartesian coordinates represent three translational and three Euler angles relative to the robot's base {B}, rotating in the order of Roll, Pitch, and Yaw. The time parameter determines the duration required for the robotic arm to reach the target position, measured in seconds. Unlike `MOVEL`, `MOVEC` allows for path adjustments during movement, enabling operation at the edges of the workspace, in areas where Inverse Kinematics (IK) solutions are discontinuous, or near singularity points.
 
 #### 2.2 MOVES
 
@@ -453,6 +466,18 @@ interface Position = {x:number, y:number, z:number, roll:number, pitch:number, y
 }
 ```
 
+- MoveC
+
+```json
+{
+  "action": "SetTask",
+  "payload": {
+    "type": "MoveCTask",
+    "args": [0, 0, 0, 0, 0, 0, 0] // Cartesian positions, unit is mm and degrees, the last one is time, unit is seconds
+  }
+}
+```
+
 - MoveL
 
 ```json
@@ -634,4 +659,18 @@ robot.wscript(script_content, repeatCount=1)
 ```python
 angles = [0, 0, 0, 0, 0, 0，0]
 robot.movej(angles)
+```
+
+-**_MoveC_**: Moves the robot to a specified Cartesian position through a non-linear path. The six numbers represent x, y, z, roll, pitch, yaw, with units in mm and degrees, respectively. The last number is the time in seconds.
+
+```python
+CartisianPose = [0, 0, 0, 0, 0, 0，0] # Specify an actual Cartesian position and a time interval
+robot.movel(CartisianPose)
+```
+
+-**_MoveL_**: Moves the robot's joints to a specified Cartesian position through a linear path. The six numbers are x, y, z, roll, pitch, yaw, with units in mm and degrees, respectively. The last number represents the time in seconds.
+
+```python
+CartisianPose = [0, 0, 0, 0, 0, 0，0] # Specify an actual Cartesian position and a time interval
+robot.movel(CartisianPose)
 ```

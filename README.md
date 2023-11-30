@@ -1,10 +1,4 @@
-### è¯­è¨€é€‰æ‹© Language Selection
-
-- [English](README-en.md)
-- [ä¸­æ–‡](README-zh.md)
-
 ---
-
 ### Table of Contents
 
 1. [Version Information & Update Log](#version-information--update-log)
@@ -12,12 +6,16 @@
 3. [UI Feature Overview](#ui-feature-overview)
 4. [STR400 Robotic Arm Kinematics Model & Motion Planning Methods](#str400-robotic-arm-kinematics-model--motion-planning-methods)
 5. [websocket APIs and Python SDK](#python-api-examples)
-
 ---
 
 ### Version Information & Update Log
 
 <a name="version-information--update-log"></a>
+
+### v0.256
+
+- **Updates:**
+  - Added a new task: MoveC. This new task allows the robotic arm to move from its current position to a target position within the Cartesian coordinate system. Unlike MoveL, MoveC does not require the movement path to be a straight line, thus relaxing constraints. This flexibility makes it feasible for the arm to operate efficiently near the edges of its workspace, in areas where Inverse Kinematics (IK) solutions are discontinuous, or close to singularity points.
 
 ### v0.255
 
@@ -171,10 +169,12 @@ Upon clicking "Edit" or "Add Track", you'll be directed to the detailed track ed
 WScript currently provides the following main commands:
 
 - **A:MOVEJ** - Move from the current position to the given absolute rotation joint angle within the specified time.
-- **A:MOVEL** - Move from the current endpoint position to the given absolute Cartesian coordinate position within the specified time.
+- **A:MOVEC** - Moves the robotic arm to a predetermined absolute Cartesian coordinate position from its current position within a specified time, following a non-linear path.
+- **A:MOVEL** - Moves the robotic arm to a predetermined absolute Cartesian coordinate position from its current position within a specified time, following a linear path.
 - **A:MOVES** - Move from the current endpoint position through a series of given absolute Cartesian coordinate positions within the specified time.
 - **R:MOVEJ** - Move from the current position to the given relative rotation joint angle within the specified time.
-- **R:MOVEL** - Move from the current endpoint position to the given relative Cartesian coordinate position within the specified time.
+- **A:MOVEC** - Moves the robotic arm to a relative Cartesian coordinate position from its current position within a specified time, via a non-linear path.
+- **R:MOVEL** - Moves the robotic arm to a relative Cartesian coordinate position from its current position within a specified time, via a linear path.
 - **R:MOVES** - Move from the current endpoint position through a series of given relative Cartesian coordinate positions within the specified time.
 - **WAIT** - Wait for the specified time.
 
@@ -226,26 +226,26 @@ On the "Robot Setting" page (as shown below):
 
 #### 1.1 Joint Angle Definition
 
-As shown in the image above, the robotic arm has 6 joint angles from J1 to J6. The yellow arrow direction indicates the positive direction. For instance, in the posture displayed in the image, the joint angles of the robotic arm are 0Â°, 0Â°, 90Â°, 0Â°, 90Â°, 0Â°.
+As shown in the image above, the robotic arm has 6 joint angles from J1 to J6. The yellow arrow direction indicates the positive direction. For instance, in the posture displayed in the image, the joint angles of the robotic arm are 0¡ã, 0¡ã, 90¡ã, 0¡ã, 90¡ã, 0¡ã.
 
 #### 1.2 Joint Angle Range
 
 The ranges of the joint angles are:
 
-- **J1:** -170Â° to 170Â°
-- **J2:** -120Â° to 120Â°
-- **J3:** -120Â° to 120Â°
-- **J4:** -145Â° to 145Â°
-- **J5:** -110Â° to 110Â°
-- **J6:** -170Â° to 170Â°
+- **J1:** -170¡ã to 170¡ã
+- **J2:** -120¡ã to 120¡ã
+- **J3:** -120¡ã to 120¡ã
+- **J4:** -145¡ã to 145¡ã
+- **J5:** -110¡ã to 110¡ã
+- **J6:** -170¡ã to 170¡ã
 
 #### 1.3 Robotic Arm End Cartesian Space Position Definition
 
-As depicted in the image, the terminal coordinates of the robotic arm's axis pass through the J6 axis heart and point outward. In the position of J6=0Â°, the x-coordinate is parallel to the robotic arm's world coordinate y-axis, and the y-coordinate is parallel to the robotic arm's world coordinate x-axis, both in the positive direction.
+As depicted in the image, the terminal coordinates of the robotic arm's axis pass through the J6 axis heart and point outward. In the position of J6=0¡ã, the x-coordinate is parallel to the robotic arm's world coordinate y-axis, and the y-coordinate is parallel to the robotic arm's world coordinate x-axis, both in the positive direction.
 
 The second row of numbers in the upper right corner of the image indicates that the position of the robotic arm's end can be described by transforming from the world coordinates to the current coordinates. We use the x, y, z, Roll, Pitch, Yaw method, rotating by Euler angles intrinsically (for more information on this, [click here](https://en.wikipedia.org/wiki/Davenport_chained_rotations#:~:text=Intrinsic%20rotations%20are%20elemental%20rotations,rotates%2C%20while%20xyz%20is%20fixed.)).
 
-The position shown in the image is: first, translate x=0mm, y=158mm, z=203mm. Then, in sequence, rotate around its own x-axis by 180Â°, y-axis by 0Â°, and z-axis by -90Â°. Note that during the rotation, the coordinate system's positive direction faces oneself; clockwise is negative rotation, and counterclockwise is positive rotation.
+The position shown in the image is: first, translate x=0mm, y=158mm, z=203mm. Then, in sequence, rotate around its own x-axis by 180¡ã, y-axis by 0¡ã, and z-axis by -90¡ã. Note that during the rotation, the coordinate system's positive direction faces oneself; clockwise is negative rotation, and counterclockwise is positive rotation.
 
 ### 2. Motion Planning Methods
 
@@ -262,6 +262,12 @@ The position shown in the image is: first, translate x=0mm, y=158mm, z=203mm. Th
 <p>&nbsp;</p>
 
 This command contains the target position's Cartesian coordinates and time. Cartesian coordinates represent three translations and three Euler angles relative to the robotic arm's base {B}, rotating in the order Roll, Pitch, Yaw. Time indicates the duration required to move from the current position to the target position, in seconds.
+
+#### 2.1 MOVEL
+
+`MOVEC` is a curved motion command that allows the robotic arm to move from its current position to a target position along a non-linear path.
+
+This command specifies the target position's Cartesian coordinates and the required time. Similar to `MOVEL`, the Cartesian coordinates represent three translational and three Euler angles relative to the robot's base {B}, rotating in the order of Roll, Pitch, and Yaw. The time parameter determines the duration required for the robotic arm to reach the target position, measured in seconds. Unlike `MOVEL`, `MOVEC` allows for path adjustments during movement, enabling operation at the edges of the workspace, in areas where Inverse Kinematics (IK) solutions are discontinuous, or near singularity points.
 
 #### 2.2 MOVES
 
@@ -460,6 +466,18 @@ interface Position = {x:number, y:number, z:number, roll:number, pitch:number, y
 }
 ```
 
+- MoveC
+
+```json
+{
+  "action": "SetTask",
+  "payload": {
+    "type": "MoveCTask",
+    "args": [0, 0, 0, 0, 0, 0, 0] // Cartesian positions, unit is mm and degrees, the last one is time, unit is seconds
+  }
+}
+```
+
 - MoveL
 
 ```json
@@ -639,6 +657,20 @@ robot.wscript(script_content, repeatCount=1)
 -**_MoveJ_**: Move robot joints to specified angles. Six angles, the last one is time in seconds.
 
 ```python
-angles = [0, 0, 0, 0, 0, 0ï¼Œ0]
+angles = [0, 0, 0, 0, 0, 0£¬0]
 robot.movej(angles)
+```
+
+-**_MoveC_**: Moves the robot to a specified Cartesian position through a non-linear path. The six numbers represent x, y, z, roll, pitch, yaw, with units in mm and degrees, respectively. The last number is the time in seconds.
+
+```python
+CartisianPose = [0, 0, 0, 0, 0, 0£¬0] # Specify an actual Cartesian position and a time interval
+robot.movel(CartisianPose)
+```
+
+-**_MoveL_**: Moves the robot's joints to a specified Cartesian position through a linear path. The six numbers are x, y, z, roll, pitch, yaw, with units in mm and degrees, respectively. The last number represents the time in seconds.
+
+```python
+CartisianPose = [0, 0, 0, 0, 0, 0£¬0] # Specify an actual Cartesian position and a time interval
+robot.movel(CartisianPose)
 ```

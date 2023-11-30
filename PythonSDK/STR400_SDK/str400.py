@@ -75,6 +75,10 @@ class STR400:
         payload = {"type": "MoveJTask", "args": angles}
         self.send_request("SetTask", payload)
 
+    def movec(self, positions):
+        payload = {"type": "MoveCTask", "args": positions}
+        self.send_request("SetTask", payload)
+
     def movel(self, positions):
         payload = {"type": "MoveLTask", "args": positions}
         self.send_request("SetTask", payload)
