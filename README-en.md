@@ -12,6 +12,12 @@
 
 <a name="version-information--update-log"></a>
 
+### v0.257
+
+- **Updates:**
+  - Modified the robotic arm's angle limits to match the latest hardware constraints.
+  - Optimized the inverse kinematics calculations for the reverse workspace.
+
 ### v0.256
 
 - **Updates:**
@@ -232,10 +238,10 @@ As shown in the image above, the robotic arm has 6 joint angles from J1 to J6. T
 
 The ranges of the joint angles are:
 
-- **J1:** -170° to 170°
+- **J1:** -145° to 145°
 - **J2:** -120° to 120°
 - **J3:** -120° to 120°
-- **J4:** -145° to 145°
+- **J4:** -155° to 155°
 - **J5:** -110° to 110°
 - **J6:** -170° to 170°
 
