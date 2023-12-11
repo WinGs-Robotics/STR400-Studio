@@ -12,6 +12,12 @@
 
 <a name="version-information--update-log"></a>
 
+### v0.258
+
+- **Updates:**
+  - Fixed the issue where preset positions 1 and 2 could not be modified.
+  - Optimized the operation logic for real-time control; now, before activating real-time control, the system will first move to the default preset position 1 using MoveJ.
+
 ### v0.257
 
 - **Updates:**
