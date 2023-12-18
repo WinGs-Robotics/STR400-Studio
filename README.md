@@ -19,6 +19,11 @@
 
 <a name="version-information--update-log"></a>
 
+### v0.259
+
+- **Updates:**
+  - Fixed the issues with MOVES
+
 ### v0.258
 
 - **Updates:**

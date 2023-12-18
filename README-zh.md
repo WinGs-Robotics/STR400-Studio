@@ -16,6 +16,11 @@
 
 <a name="version-information--update-log"></a>
 
+### v0.259
+
+- **Updates:**
+  - MOVES 的一些问题得到解决。
+
 ### v0.258
 
 - **Updates:**
