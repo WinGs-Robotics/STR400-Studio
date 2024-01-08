@@ -20,7 +20,7 @@
 
 #### 1. Downloading the Software
 
-Go to the [WinGs Robotics STR400 Studio Github Page](https://github.com/WinGs-Robotics/STR400-Studio/tree/main/APP) and download the entire folder. It contains executable files and corresponding configuration files.
+Go to the [WinGs Robotics STR400 Studio Github Page](https://github.com/WinGs-Robotics/STR400-Studio/tree/main) and download lastest release for different OS.
 
 **System Compatibility Tests**:
 

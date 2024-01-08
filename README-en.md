@@ -1,11 +1,10 @@
 ---
 ### Table of Contents
 
-1. [Version Information & Update Log](#version-information--update-log)
-2. [Download & Installation](#download--installation)
-3. [UI Feature Overview](#ui-feature-overview)
-4. [STR400 Robotic Arm Kinematics Model & Motion Planning Methods](#str400-robotic-arm-kinematics-model--motion-planning-methods)
-5. [websocket APIs and Python SDK](#python-api-examples)
+1. [Download & Installation](#download--installation)
+2. [UI Feature Overview](#ui-feature-overview)
+3. [STR400 Robotic Arm Kinematics Model & Motion Planning Methods](#str400-robotic-arm-kinematics-model--motion-planning-methods)
+4. [websocket APIs and Python SDK](#python-api-examples)
 ---
 
 ### Download & Installation
@@ -14,7 +13,7 @@
 
 #### 1. Downloading the Software
 
-Go to the [WinGs Robotics STR400 Studio Github Page](https://github.com/WinGs-Robotics/STR400-Studio/tree/main/APP) and download the entire folder. It contains executable files and corresponding configuration files.
+Go to the [WinGs Robotics STR400 Studio Github Page](https://github.com/WinGs-Robotics/STR400-Studio/tree/main) and download lastest release for different OS.
 
 **System Compatibility Tests**:
 

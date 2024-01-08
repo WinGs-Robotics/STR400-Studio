@@ -1,10 +1,9 @@
 ### 目录
 
-1. [版本信息 & 更新日志](#版本信息--更新日志)
-2. [下载与安装](#下载与安装)
-3. [UI 界面功能介绍](#ui界面功能介绍)
-4. [STR400 机械臂 kinematics 模型&运动规划方法](#str400-机械臂kinematics模型运动规划方法)
-5. [Websocket API 和 Python SDK](#python-api示例)
+1. [下载与安装](#下载与安装)
+2. [UI 界面功能介绍](#ui界面功能介绍)
+3. [STR400 机械臂 kinematics 模型&运动规划方法](#str400-机械臂kinematics模型运动规划方法)
+4. [Websocket API 和 Python SDK](#python-api示例)
 
 ---
 
@@ -14,7 +13,7 @@
 
 #### 1. 下载软件
 
-前往 [WinGs Robotics STR400 Studio Github 页面](https://github.com/WinGs-Robotics/STR400-Studio/tree/main/APP) 下载整个文件夹。其中包含了可执行文件及相应的配置文件。
+前往 [WinGs Robotics STR400 Studio Github 页面](https://github.com/WinGs-Robotics/STR400-Studio/tree/main) 页面右边下载最新的 release。其中包含了不同系统下的可执行文件。
 
 **系统兼容性测试**:
 
