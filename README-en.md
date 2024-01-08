@@ -8,44 +8,6 @@
 5. [websocket APIs and Python SDK](#python-api-examples)
 ---
 
-### Version Information & Update Log
-
-<a name="version-information--update-log"></a>
-
-### v0.259
-
-- **Updates:**
-  - Fixed the issues with MOVES
-
-### v0.258
-
-- **Updates:**
-  - Fixed the issue where preset positions 1 and 2 could not be modified.
-  - Optimized the operation logic for real-time control; now, before activating real-time control, the system will first move to the default preset position 1 using MoveJ.
-
-### v0.257
-
-- **Updates:**
-  - Modified the robotic arm's angle limits to match the latest hardware constraints.
-  - Optimized the inverse kinematics calculations for the reverse workspace.
-
-### v0.256
-
-- **Updates:**
-  - Added a new task: MoveC. This new task allows the robotic arm to move from its current position to a target position within the Cartesian coordinate system. Unlike MoveL, MoveC does not require the movement path to be a straight line, thus relaxing constraints. This flexibility makes it feasible for the arm to operate efficiently near the edges of its workspace, in areas where Inverse Kinematics (IK) solutions are discontinuous, or close to singularity points.
-
-### v0.255
-
-- **Updates:**
-  - Arm disabled automatically when CRC does not match.
-
-### v0.253
-
-- **Updates:**
-  - Initial release.
-
----
-
 ### Download & Installation
 
 <a name="download--installation"></a>
